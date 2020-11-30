@@ -14,7 +14,7 @@ abstract class Engine
             $client = new Client();
             $response = $client->request('GET', $url, [
                 'http_errors' => false,
-                'proxy' => ["102.190.248.7:80"],
+                'proxy' => ["152.26.66.140:3128"],
                 'headers' => [
                     'User-Agent' => Faker\Factory::create()->useragent,
                 ]
