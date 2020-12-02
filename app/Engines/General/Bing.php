@@ -26,6 +26,6 @@ class Bing extends Engine
             $languages[$code_name] = $long_name;
         }
 
-        return $languages;
+        return array_keys($languages);
     }
 }

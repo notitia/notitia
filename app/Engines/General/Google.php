@@ -9,8 +9,11 @@ class Google extends Engine
     private $category = "general";
     private $paging = true;
     private $language_support = true;
+    static private $aliases = [
+        'ja' => 'jp'
+    ];
 
-    private $google_domains = [
+    static private $google_domains = [
     'BG' => 'google.bg',      # Bulgaria
     'CZ' => 'google.cz',      # Czech Republic
     'DE' => 'google.de',      # Germany
@@ -64,16 +67,29 @@ class Google extends Engine
     'TW' => 'google.com.tw'   # Taiwan
     ];
 
+    public static function getGoogleDomains() {
+        return self::$google_domains;
+    }
+
     public static function fetchSupportedLanguages() {
         $crawler = Engine::file_get_html('https://www.google.com/preferences#languages');
         $scrapped = $crawler->find('*[id="langSec"]', 0)->find('input[name=lr]');
         $languages = array();
 
-        foreach($scrapped as $language) {
-            $code_name = explode('_', $language->attr['value'])[1];
-            $long_name = $language->attr['data-name'];
+        if ($scrapped) {
+            foreach ($scrapped as $language) {
+                $code_name = explode('_', $language->attr['value'])[1];
+                $long_name = $language->attr['data-name'];
 
-            $languages[$code_name] = $long_name;
+                foreach (self::$aliases as $key => $alias) {
+                    if($code_name === $key) {
+                        $code_name = $alias;
+                    }
+                }
+
+                array_push($languages, $code_name);
+                //$languages[$code_name] = $long_name;
+            }
         }
 
         return $languages;

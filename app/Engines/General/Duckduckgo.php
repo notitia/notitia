@@ -2,6 +2,7 @@
 namespace App\Engines\General;
 
 use App\Engines\Engine;
+use Illuminate\Support\Str;
 
 class Duckduckgo extends Engine
 {
@@ -19,12 +20,12 @@ class Duckduckgo extends Engine
 
         foreach($countries as $country) {
             $country = str_replace('"', '', explode(':', $country));
-            $code_name = $country[0];
+            $code_name = Str::after($country[0], '-').'-'.Str::before($country[0], '-');
             $long_name = $country[1];
 
             $languages[$code_name] = $long_name;
         }
 
-        return $languages;
+        return array_keys($languages);
     }
 }
