@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Engines\General;
 
 use App\Engines\Engine;
@@ -11,21 +12,25 @@ class Bing extends Engine
     private $paging = true;
     private $language_support = true;
 
-    public static function fetchSupportedLanguages() {
+    public static function fetchSupportedLanguages()
+    {
         $crawler = Engine::file_get_html('https://www.bing.com/account/general');
-        $scrapped = $crawler->find('li > a[href*=setmkt]');
-        $languages = array();
 
-        foreach($scrapped as $language) {
-            preg_match_all('@<a href=".*?" h=".*?">([^<]+)</a>@i', $language->outertext, $out);
-            parse_str(parse_url($language->href)['query'], $query);
+        if ($crawler) {
+            $scrapped = $crawler->find('li > a[href*=setmkt]');
+            $languages = array();
 
-            $long_name = $out[1][0];
-            $code_name = $query["setmkt"];
+            foreach ($scrapped as $language) {
+                preg_match_all('@<a href=".*?" h=".*?">([^<]+)</a>@i', $language->outertext, $out);
+                parse_str(parse_url($language->href)['query'], $query);
 
-            $languages[$code_name] = $long_name;
+                $long_name = $out[1][0];
+                $code_name = $query["setmkt"];
+
+                $languages[$code_name] = $long_name;
+            }
+
+            return array_keys($languages);
         }
-
-        return array_keys($languages);
     }
 }
